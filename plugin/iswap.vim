@@ -10,6 +10,9 @@ command ISwapNode lua require('iswap').iswap_node()
 command ISwapNodeWith lua require('iswap').iswap_node_with()
 command ISwapNodeWithRight lua require('iswap').iswap_node_with('right')
 command ISwapNodeWithLeft lua require('iswap').iswap_node_with('left')
+command ISwapGotoNode lua require('iswap').navigate()
+command ISwapGotoNext lua require('iswap').cycle('right')
+command ISwapGotoPrev lua require('iswap').cycle('left')
 
 " <Plug>ISwap will delay because it becomes <Plug>ISwapWith prefix sequence.
 " Use <Plug>ISwapNormal instead and etc for others
