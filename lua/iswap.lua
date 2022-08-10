@@ -226,7 +226,7 @@ function M.iswap_node_with(direction, config)
         swap_node = swap_node:prev_named_sibling()
       end
     else
-      user_input = ui.prompt(bufnr, config, children, { { sr, sc }, { er, ec } }, 1)
+      local user_input = ui.prompt(bufnr, config, children, { { sr, sc }, { er, ec } }, 1)
       if not (type(user_input) == "table" and #user_input == 1) then
         err("did not get two valid user inputs", config.debug)
         return
