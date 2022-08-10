@@ -63,7 +63,12 @@ function M.cycle(direction, config)
   local winid = vim.api.nvim_get_current_win()
 
   local cursor_node = ts_utils.get_node_at_cursor(winid)
-  local current_row, current_col = cursor_node:start()
+  local current_row, current_col
+  if cursor_node then
+    current_row, current_col = cursor_node:start()
+  else
+    return
+  end
 
   -- find outer parent :=  its start() is same as cursor_node:start()
   local last_valid_node = cursor_node
@@ -90,30 +95,23 @@ function M.cycle(direction, config)
   local sr, sc, er, ec = outer_parent:range()
 
   -- nothing to swap here
-  -- if #children < 2 then
-  --   return
-  -- end
+  if #children < 2 then
+    return
+  end
 
-  -- a and b are the nodes to swap
   local swap_node
+  direction = direction or "right"
 
   if direction == "right" then
     swap_node = outer_cursor_node:next_named_sibling()
     while swap_node ~= nil and swap_node:type() == "comment" do
       swap_node = swap_node:next_named_sibling()
     end
-  elseif direction == "left" then
+  else
     swap_node = outer_cursor_node:prev_named_sibling()
     while swap_node ~= nil and swap_node:type() == "comment" do
       swap_node = swap_node:prev_named_sibling()
     end
-  else
-    user_input = ui.prompt(bufnr, config, children, { { sr, sc }, { er, ec } }, 1)
-    if not (type(user_input) == "table" and #user_input == 1) then
-      err("did not get two valid user inputs", config.debug)
-      return
-    end
-    swap_node = unpack(user_input)
   end
 
   if swap_node == nil then
@@ -122,12 +120,6 @@ function M.cycle(direction, config)
   end
 
   ts_utils.goto_node(swap_node, false, true)
-
-  -- local a_range, b_range = unpack(internal.swap_nodes_and_return_new_ranges(outer_cursor_node, swap_node, bufnr, true))
-  --
-  -- ui.flash_confirm(bufnr, { a_range, b_range }, config)
-  --
-  -- vim.cmd([[silent! call repeat#set("\<Plug>ISwapNormal", -1)]])
 end
 
 function M.iswap(config)
